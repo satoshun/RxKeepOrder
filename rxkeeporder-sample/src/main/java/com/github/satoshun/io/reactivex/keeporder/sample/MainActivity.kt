@@ -1,4 +1,4 @@
-package com.github.satoshun.reactivex.keeporder.sample
+package com.github.satoshun.io.reactivex.keeporder.sample
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity

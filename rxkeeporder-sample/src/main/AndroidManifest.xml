@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.github.satoshun.reactivex.keeporder.sample">
+    package="com.github.satoshun.io.reactivex.keeporder.sample">
 
   <application
       android:allowBackup="true"

@@ -1,4 +1,4 @@
-package com.github.satoshun.reactivex.keeporder.sample
+package com.github.satoshun.io.reactivex.keeporder.sample
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
