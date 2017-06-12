@@ -13,6 +13,10 @@ import io.reactivex.ObservableSource;
 import io.reactivex.Single;
 import io.reactivex.SingleSource;
 import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Function;
+import io.reactivex.internal.functions.Functions;
+
+import static io.reactivex.Flowable.bufferSize;
 
 public class RxKeepOrder {
 
@@ -25,12 +29,12 @@ public class RxKeepOrder {
 
       @Override public Publisher<T> apply(Flowable<T> upstream) {
         verifyMainThread();
-        Flowable<Object> singleEmissionFlowable = preSource
+        Flowable<Object> singleEmission = preSource
             .lastOrError()
             .onErrorResumeNext(Single.just(SENTINEL))
             .toFlowable();
-        Flowable<Object> upNext = Flowable.concatArrayDelayError(
-            singleEmissionFlowable, upstream
+        Flowable<Object> upNext = Flowable.fromArray(singleEmission, upstream).concatMapEagerDelayError(
+            (Function) Functions.identity(), bufferSize(), bufferSize(), false
         ).skip(1).cache();
         preSource = upNext;
         return (Flowable<T>) upNext;
@@ -38,12 +42,12 @@ public class RxKeepOrder {
 
       @Override public ObservableSource<T> apply(Observable<T> upstream) {
         verifyMainThread();
-        Observable<Object> singleEmissionObservable = preSource
+        Observable<Object> singleEmission = preSource
             .lastOrError()
             .onErrorResumeNext(Single.just(SENTINEL))
             .toObservable();
-        Observable<Object> upNext = Observable.concatArrayDelayError(
-            singleEmissionObservable, upstream
+        Observable<Object> upNext = Observable.concatArrayEager(
+            singleEmission, upstream
         ).skip(1).cache();
         preSource = upNext.toFlowable(BackpressureStrategy.DROP);
         return (ObservableSource<T>) upNext;
@@ -51,26 +55,27 @@ public class RxKeepOrder {
 
       @Override public SingleSource<T> apply(Single<T> upstream) {
         verifyMainThread();
-        Single<Object> singleEmissionSingle = preSource
+        Observable<Object> singleEmission = preSource
             .lastOrError()
-            .onErrorResumeNext(Single.just(SENTINEL));
-        Flowable<Object> upNext = Single.concatArray(
-            singleEmissionSingle, upstream
+            .onErrorResumeNext(Single.just(SENTINEL))
+            .toObservable();
+        Observable<Object> upNext = Observable.concatArrayEager(
+            singleEmission, upstream.toObservable()
         ).skip(1).cache();
-        preSource = upNext;
+        preSource = upNext.toFlowable(BackpressureStrategy.DROP);
         return (SingleSource<T>) upNext.singleOrError();
       }
 
       @Override public MaybeSource<T> apply(Maybe<T> upstream) {
         verifyMainThread();
-        Maybe<Object> singleEmissionMaybe = preSource
+        Observable<Object> singleEmission = preSource
             .lastOrError()
             .onErrorResumeNext(Single.just(SENTINEL))
-            .toMaybe();
-        Flowable<Object> upNext = Maybe.concatArrayDelayError(
-            singleEmissionMaybe, upstream
+            .toObservable();
+        Observable<Object> upNext = Observable.concatArrayEager(
+            singleEmission, upstream.toObservable()
         ).skip(1).cache();
-        preSource = upNext;
+        preSource = upNext.toFlowable(BackpressureStrategy.DROP);
         return (MaybeSource<T>) upNext.singleElement();
       }
     };
