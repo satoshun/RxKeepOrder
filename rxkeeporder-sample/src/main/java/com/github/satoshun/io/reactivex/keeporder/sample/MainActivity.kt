@@ -5,7 +5,10 @@ import android.support.v7.app.AppCompatActivity
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.github.satoshun.io.reactivex.keeporder.RxKeepOrder
+import io.reactivex.Flowable
+import io.reactivex.Maybe
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
@@ -28,7 +31,7 @@ class MainActivity : AppCompatActivity() {
 
     Observable.just("1", "2")
         .delay(2, TimeUnit.SECONDS)
-        .subscribeOn(Schedulers.io())
+        .subscribeOn(Schedulers.newThread())
         .observeOn(AndroidSchedulers.mainThread())
         .compose(rxKeepOrder.apply())
         .subscribe { addView(it) }
@@ -42,10 +45,38 @@ class MainActivity : AppCompatActivity() {
 
     Observable.just(6)
         .delay(500, TimeUnit.MILLISECONDS)
+        .subscribeOn(Schedulers.computation())
+        .observeOn(AndroidSchedulers.mainThread())
+        .compose(rxKeepOrder.apply())
+        .subscribe { addView(it.toString()) }
+
+    Flowable.just(7, 8)
+        .delay(100, TimeUnit.MILLISECONDS)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .compose(rxKeepOrder.apply())
         .subscribe { addView(it.toString()) }
+
+    Flowable.just("9")
+        .map { throw RuntimeException("exception $it") }
+        .delay(500, TimeUnit.MILLISECONDS)
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .compose(rxKeepOrder.apply())
+        .subscribe({}, { addView(it.message!!) })
+
+    Maybe.just(10)
+        .delay(2000, TimeUnit.MILLISECONDS)
+        .subscribeOn(Schedulers.computation())
+        .observeOn(AndroidSchedulers.mainThread())
+        .compose(rxKeepOrder.apply())
+        .subscribe { addView(it.toString()) }
+
+    Single.just("11")
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .compose(rxKeepOrder.apply())
+        .subscribe({ addView(it) }, { })
   }
 
   private fun addView(text: String) {
