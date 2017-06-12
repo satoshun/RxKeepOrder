@@ -2,30 +2,46 @@ package com.github.satoshun.io.reactivex.keeporder;
 
 import android.os.Looper;
 
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
-import io.reactivex.ObservableTransformer;
+import io.reactivex.Single;
+import io.reactivex.SingleSource;
 import io.reactivex.annotations.NonNull;
 
 public class RxKeepOrder {
 
   private static final Object SENTINEL = new Object();
 
-  private Observable<Object> preSource = Observable.empty();
+  private Flowable<Object> preSource = Flowable.empty();
 
-  @NonNull public <T> ObservableTransformer<T, T> apply() {
-    return new ObservableTransformer<T, T>() {
+  @NonNull public <T> KeepOrderTransformer<T> apply() {
+    return new KeepOrderTransformer<T>() {
+
       @Override public ObservableSource<T> apply(Observable<T> upstream) {
         verifyMainThread();
         Observable<Object> singleEmissionObservable = preSource
-            .onErrorResumeNext(Observable.empty())
+            .onErrorResumeNext(Flowable.empty())
             .last(SENTINEL)
             .toObservable();
         Observable<Object> upNext = Observable.concatArrayEager(
             singleEmissionObservable, upstream
         ).skip(1).cache();
-        preSource = upNext;
+        preSource = upNext.toFlowable(BackpressureStrategy.DROP);
         return (ObservableSource<T>) upNext;
+      }
+
+      @Override public SingleSource<T> apply(Single<T> upstream) {
+        verifyMainThread();
+        Single<Object> singleEmissionObservable = preSource
+            .onErrorResumeNext(Flowable.empty())
+            .last(SENTINEL);
+        Flowable<Object> upNext = Single.concatArray(
+            singleEmissionObservable, upstream
+        ).skip(1).cache();
+        preSource = upNext;
+        return (SingleSource<T>) upNext.singleOrError();
       }
     };
   }
@@ -37,6 +53,6 @@ public class RxKeepOrder {
   }
 
   public void clear() {
-    preSource = Observable.empty();
+    preSource = Flowable.empty();
   }
 }
