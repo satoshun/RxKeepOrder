@@ -26,7 +26,7 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class)
-public class RxKeepOrderTest {
+public class RxKeepOrder_ObservableTest {
 
   private RxKeepOrder rxKeepOrder;
 
@@ -92,6 +92,66 @@ public class RxKeepOrderTest {
         .subscribe(new Consumer<String>() {
           @Override public void accept(String value) throws Exception {
             assertThat((String) expected.remove(0), is(value));
+            latch.countDown();
+          }
+        });
+    Observable.just(
+        Collections.singletonList("3"),
+        Collections.singletonList("4"))
+        .delay(10, TimeUnit.MILLISECONDS)
+        .compose(rxKeepOrder.<List<String>>apply())
+        .subscribeOn(Schedulers.io())
+        .subscribe(new Consumer<List<String>>() {
+          @Override public void accept(List<String> value) throws Exception {
+            assertThat((List<String>) expected.remove(0), is(value));
+            latch.countDown();
+          }
+        });
+    latch.await(1000, TimeUnit.MILLISECONDS);
+    assertThat("no consume stream value", expected.size(), is(0));
+  }
+
+  @Test public void observable__keep_order_difference_type_with_error() throws Exception {
+    final CountDownLatch latch = new CountDownLatch(5);
+    final List<Object> expected = new ArrayList<>(Arrays.asList(
+        1,
+        "2",
+        new RuntimeException("pseudo error"),
+        Collections.singletonList("3"),
+        Collections.singletonList("4")));
+    Observable.just(1)
+        .delay(100, TimeUnit.MILLISECONDS)
+        .compose(rxKeepOrder.<Integer>apply())
+        .subscribeOn(Schedulers.io())
+        .subscribe(new Consumer<Integer>() {
+          @Override public void accept(Integer value) throws Exception {
+            assertThat((Integer) expected.remove(0), is(value));
+            latch.countDown();
+          }
+        });
+    Observable.just("2")
+        .delay(30, TimeUnit.MILLISECONDS)
+        .compose(rxKeepOrder.<String>apply())
+        .subscribeOn(Schedulers.io())
+        .subscribe(new Consumer<String>() {
+          @Override public void accept(String value) throws Exception {
+            assertThat((String) expected.remove(0), is(value));
+            latch.countDown();
+          }
+        });
+    Observable.error(new RuntimeException("pseudo error"))
+        .delay(5, TimeUnit.MILLISECONDS)
+        .compose(rxKeepOrder.apply())
+        .subscribeOn(Schedulers.io())
+        .subscribe(new Consumer<Object>() {
+          @Override public void accept(Object value) throws Exception {
+            throw new IllegalArgumentException("not called it code");
+          }
+        }, new Consumer<Throwable>() {
+          @Override public void accept(Throwable value) throws Exception {
+            assertThat(
+                ((Throwable) expected.remove(0)).getMessage(),
+                is(value.getMessage()));
             latch.countDown();
           }
         });
