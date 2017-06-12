@@ -6,6 +6,8 @@ import org.reactivestreams.Publisher;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
+import io.reactivex.Maybe;
+import io.reactivex.MaybeSource;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.Single;
@@ -49,14 +51,27 @@ public class RxKeepOrder {
 
       @Override public SingleSource<T> apply(Single<T> upstream) {
         verifyMainThread();
-        Single<Object> singleEmissionObservable = preSource
+        Single<Object> singleEmissionSingle = preSource
             .lastOrError()
             .onErrorResumeNext(Single.just(SENTINEL));
         Flowable<Object> upNext = Single.concatArray(
-            singleEmissionObservable, upstream
+            singleEmissionSingle, upstream
         ).skip(1).cache();
         preSource = upNext;
         return (SingleSource<T>) upNext.singleOrError();
+      }
+
+      @Override public MaybeSource<T> apply(Maybe<T> upstream) {
+        verifyMainThread();
+        Maybe<Object> singleEmissionMaybe = preSource
+            .lastOrError()
+            .onErrorResumeNext(Single.just(SENTINEL))
+            .toMaybe();
+        Flowable<Object> upNext = Maybe.concatArrayDelayError(
+            singleEmissionMaybe, upstream
+        ).skip(1).cache();
+        preSource = upNext;
+        return (MaybeSource<T>) upNext.singleElement();
       }
     };
   }

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import io.reactivex.Flowable;
+import io.reactivex.Maybe;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.TestSubscriber;
@@ -23,7 +23,7 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class)
-public class RxKeepOrder_FlowableTest {
+public class RxKeepOrder_MaybeTest {
 
   private RxKeepOrder rxKeepOrder;
 
@@ -31,31 +31,30 @@ public class RxKeepOrder_FlowableTest {
     rxKeepOrder = new RxKeepOrder();
   }
 
-  @Test public void flowable__keep_order_two() throws Exception {
-    Flowable<Integer> test1 = Flowable.just(1)
+  @Test public void maybe__keep_order_two() throws Exception {
+    Maybe<Integer> test1 = Maybe.just(1)
         .delay(100, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.<Integer>apply())
         .subscribeOn(Schedulers.io());
-    Flowable<Integer> test2 = Flowable.just(2)
+    Maybe<Integer> test2 = Maybe.just(2)
         .delay(50, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.<Integer>apply())
         .subscribeOn(Schedulers.io());
 
-    TestSubscriber<Integer> merged = Flowable.merge(test1, test2).test();
+    TestSubscriber<Integer> merged = Maybe.merge(test1, test2).test();
     merged.await();
     merged.assertValues(1, 2);
   }
 
-  @Test public void flowable__keep_order_difference_type() throws Exception {
-    final CountDownLatch latch = new CountDownLatch(4);
+  @Test public void maybe__keep_order_difference_type() throws Exception {
+    final CountDownLatch latch = new CountDownLatch(3);
     final List<Object> actual = new ArrayList<>();
     final List<Object> expected = new ArrayList<>(Arrays.asList(
         1,
         "2",
-        Collections.singletonList("3"),
-        Collections.singletonList("4")));
+        Collections.singletonList("3")));
 
-    Flowable.just(1)
+    Maybe.just(1)
         .delay(100, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.<Integer>apply())
         .subscribeOn(Schedulers.io())
@@ -65,7 +64,7 @@ public class RxKeepOrder_FlowableTest {
             latch.countDown();
           }
         });
-    Flowable.just("2")
+    Maybe.just("2")
         .delay(30, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.<String>apply())
         .subscribeOn(Schedulers.io())
@@ -75,9 +74,7 @@ public class RxKeepOrder_FlowableTest {
             latch.countDown();
           }
         });
-    Flowable.just(
-        Collections.singletonList("3"),
-        Collections.singletonList("4"))
+    Maybe.just(Collections.singletonList("3"))
         .delay(10, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.<List<String>>apply())
         .subscribeOn(Schedulers.io())
@@ -94,17 +91,16 @@ public class RxKeepOrder_FlowableTest {
     }
   }
 
-  @Test public void flowable__keep_order_difference_type_with_error() throws Exception {
-    final CountDownLatch latch = new CountDownLatch(5);
+  @Test public void maybe__keep_order_difference_type_with_error() throws Exception {
+    final CountDownLatch latch = new CountDownLatch(4);
     final RuntimeException pseudoException = new RuntimeException("pseudo error");
     final List<Object> actual = new ArrayList<>();
     final List<Object> expected = new ArrayList<>(Arrays.asList(
         1,
         "2",
         pseudoException,
-        Collections.singletonList("3"),
-        Collections.singletonList("4")));
-    Flowable.just(1)
+        Collections.singletonList("3")));
+    Maybe.just(1)
         .delay(100, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.<Integer>apply())
         .subscribeOn(Schedulers.io())
@@ -114,7 +110,7 @@ public class RxKeepOrder_FlowableTest {
             latch.countDown();
           }
         });
-    Flowable.just("2")
+    Maybe.just("2")
         .delay(30, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.<String>apply())
         .subscribeOn(Schedulers.io())
@@ -124,7 +120,7 @@ public class RxKeepOrder_FlowableTest {
             latch.countDown();
           }
         });
-    Flowable.error(pseudoException)
+    Maybe.error(pseudoException)
         .delay(5, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.apply())
         .subscribeOn(Schedulers.io())
@@ -138,9 +134,7 @@ public class RxKeepOrder_FlowableTest {
             latch.countDown();
           }
         });
-    Flowable.just(
-        Collections.singletonList("3"),
-        Collections.singletonList("4"))
+    Maybe.just(Collections.singletonList("3"))
         .delay(10, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.<List<String>>apply())
         .subscribeOn(Schedulers.io())
