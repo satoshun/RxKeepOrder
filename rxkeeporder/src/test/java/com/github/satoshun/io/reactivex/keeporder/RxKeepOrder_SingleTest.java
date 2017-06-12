@@ -1,7 +1,4 @@
-package com.github.satoshun.rxkeeporder;
-
-import com.github.satoshun.io.reactivex.keeporder.BuildConfig;
-import com.github.satoshun.io.reactivex.keeporder.RxKeepOrder;
+package com.github.satoshun.io.reactivex.keeporder;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -16,17 +13,17 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import io.reactivex.Observable;
+import io.reactivex.Single;
 import io.reactivex.functions.Consumer;
-import io.reactivex.observers.TestObserver;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subscribers.TestSubscriber;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class)
-public class RxKeepOrder_ObservableTest {
+public class RxKeepOrder_SingleTest {
 
   private RxKeepOrder rxKeepOrder;
 
@@ -34,112 +31,115 @@ public class RxKeepOrder_ObservableTest {
     rxKeepOrder = new RxKeepOrder();
   }
 
-  @Test public void observable__keep_order_two() throws Exception {
-    Observable<Integer> test1 = Observable.just(1)
+  @Test public void single__keep_order_two() throws Exception {
+    Single<Integer> test1 = Single.just(1)
         .delay(100, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.<Integer>apply())
         .subscribeOn(Schedulers.io());
-    Observable<Integer> test2 = Observable.just(2)
+    Single<Integer> test2 = Single.just(2)
         .delay(50, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.<Integer>apply())
         .subscribeOn(Schedulers.io());
 
-    TestObserver<Integer> merged = Observable.merge(test1, test2).test();
+    TestSubscriber<Integer> merged = Single.merge(test1, test2).test();
     merged.await();
     merged.assertValues(1, 2);
   }
 
-  @Test public void observable__keep_order_three() throws Exception {
-    Observable<Integer> test1 = Observable.just(1)
+  @Test public void single__keep_order_three() throws Exception {
+    Single<Integer> test1 = Single.just(1)
         .delay(100, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.<Integer>apply())
         .subscribeOn(Schedulers.io());
-    Observable<Integer> test2 = Observable.just(2)
+    Single<Integer> test2 = Single.just(2)
         .delay(30, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.<Integer>apply())
         .subscribeOn(Schedulers.io());
-    Observable<Integer> test34 = Observable.just(3, 4)
+    Single<Integer> test3 = Single.just(3)
         .delay(50, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.<Integer>apply())
         .subscribeOn(Schedulers.io());
 
-    TestObserver<Integer> merged = Observable.merge(test1, test2, test34).test();
+    TestSubscriber<Integer> merged = Single.merge(test1, test2, test3).test();
     merged.await();
-    merged.assertValues(1, 2, 3, 4);
+    merged.assertValues(1, 2, 3);
   }
 
-  @Test public void observable__keep_order_difference_type() throws Exception {
-    final CountDownLatch latch = new CountDownLatch(4);
+  @Test public void single__keep_order_difference_type() throws Exception {
+    final CountDownLatch latch = new CountDownLatch(3);
     final List<Object> expected = new ArrayList<>(Arrays.asList(
         1,
         "2",
-        Collections.singletonList("3"),
-        Collections.singletonList("4")));
-    Observable.just(1)
+        Collections.singletonList("3")));
+    final List<Object> actual = new ArrayList<>();
+    Single.just(1)
         .delay(100, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.<Integer>apply())
         .subscribeOn(Schedulers.io())
         .subscribe(new Consumer<Integer>() {
           @Override public void accept(Integer value) throws Exception {
-            assertThat((Integer) expected.remove(0), is(value));
+            actual.add(value);
             latch.countDown();
           }
         });
-    Observable.just("2")
+    Single.just("2")
         .delay(30, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.<String>apply())
         .subscribeOn(Schedulers.io())
         .subscribe(new Consumer<String>() {
           @Override public void accept(String value) throws Exception {
-            assertThat((String) expected.remove(0), is(value));
+            actual.add(value);
             latch.countDown();
           }
         });
-    Observable.just(
-        Collections.singletonList("3"),
-        Collections.singletonList("4"))
+    Single.just(
+        Collections.singletonList("3"))
         .delay(10, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.<List<String>>apply())
         .subscribeOn(Schedulers.io())
         .subscribe(new Consumer<List<String>>() {
           @Override public void accept(List<String> value) throws Exception {
-            assertThat((List<String>) expected.remove(0), is(value));
+            actual.add(value);
             latch.countDown();
           }
         });
     latch.await(1000, TimeUnit.MILLISECONDS);
-    assertThat("no consume stream value", expected.size(), is(0));
+    assertThat("no consume stream value", actual.size(), is(expected.size()));
+    for (int i = 0; i < actual.size(); i++) {
+      assertThat(actual.get(i), is(expected.get(i)));
+    }
   }
 
-  @Test public void observable__keep_order_difference_type_with_error() throws Exception {
-    final CountDownLatch latch = new CountDownLatch(5);
+  @Test public void single__keep_order_difference_type_with_error() throws Exception {
+    final CountDownLatch latch = new CountDownLatch(4);
+    final RuntimeException pseudoException = new RuntimeException("pseudo error");
     final List<Object> expected = new ArrayList<>(Arrays.asList(
         1,
         "2",
-        new RuntimeException("pseudo error"),
-        Collections.singletonList("3"),
-        Collections.singletonList("4")));
-    Observable.just(1)
+        pseudoException,
+        Collections.singletonList("3")));
+    final List<Object> actual = new ArrayList<>();
+    Single.just(1)
         .delay(100, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.<Integer>apply())
         .subscribeOn(Schedulers.io())
         .subscribe(new Consumer<Integer>() {
           @Override public void accept(Integer value) throws Exception {
-            assertThat((Integer) expected.remove(0), is(value));
+            actual.add(value);
             latch.countDown();
           }
         });
-    Observable.just("2")
+    Single.just("2")
         .delay(30, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.<String>apply())
         .subscribeOn(Schedulers.io())
         .subscribe(new Consumer<String>() {
           @Override public void accept(String value) throws Exception {
-            assertThat((String) expected.remove(0), is(value));
+            actual.add(value);
             latch.countDown();
           }
         });
-    Observable.error(new RuntimeException("pseudo error"))
+    Single.error(pseudoException)
         .delay(5, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.apply())
         .subscribeOn(Schedulers.io())
@@ -149,25 +149,25 @@ public class RxKeepOrder_ObservableTest {
           }
         }, new Consumer<Throwable>() {
           @Override public void accept(Throwable value) throws Exception {
-            assertThat(
-                ((Throwable) expected.remove(0)).getMessage(),
-                is(value.getMessage()));
+            actual.add(value);
             latch.countDown();
           }
         });
-    Observable.just(
-        Collections.singletonList("3"),
-        Collections.singletonList("4"))
+    Single.just(
+        Collections.singletonList("3"))
         .delay(10, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.<List<String>>apply())
         .subscribeOn(Schedulers.io())
         .subscribe(new Consumer<List<String>>() {
           @Override public void accept(List<String> value) throws Exception {
-            assertThat((List<String>) expected.remove(0), is(value));
+            actual.add(value);
             latch.countDown();
           }
         });
     latch.await(1000, TimeUnit.MILLISECONDS);
-    assertThat("no consume stream value", expected.size(), is(0));
+    assertThat("no consume stream value", actual.size(), is(expected.size()));
+    for (int i = 0; i < actual.size(); i++) {
+      assertThat(actual.get(i), is(expected.get(i)));
+    }
   }
 }

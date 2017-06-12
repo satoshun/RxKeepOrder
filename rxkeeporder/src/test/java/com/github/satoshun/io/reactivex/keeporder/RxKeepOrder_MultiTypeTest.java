@@ -1,4 +1,4 @@
-package com.github.satoshun.rxkeeporder;
+package com.github.satoshun.io.reactivex.keeporder;
 
 import com.github.satoshun.io.reactivex.keeporder.BuildConfig;
 import com.github.satoshun.io.reactivex.keeporder.RxKeepOrder;
