@@ -32,50 +32,50 @@ class MainActivity : AppCompatActivity() {
     Observable.just("1", "2")
         .delay(2, TimeUnit.SECONDS)
         .subscribeOn(Schedulers.newThread())
-        .observeOn(AndroidSchedulers.mainThread())
         .compose(rxKeepOrder.apply())
+        .observeOn(AndroidSchedulers.mainThread())
         .subscribe { addView(it) }
 
     Observable.just("3", "4", "5")
         .delay(1, TimeUnit.SECONDS)
         .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
         .compose(rxKeepOrder.apply())
+        .observeOn(AndroidSchedulers.mainThread())
         .subscribe { addView(it) }
 
     Observable.just(6)
         .delay(500, TimeUnit.MILLISECONDS)
         .subscribeOn(Schedulers.computation())
-        .observeOn(AndroidSchedulers.mainThread())
         .compose(rxKeepOrder.apply())
+        .observeOn(AndroidSchedulers.mainThread())
         .subscribe { addView(it.toString()) }
 
     Flowable.just(7, 8)
         .delay(100, TimeUnit.MILLISECONDS)
         .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
         .compose(rxKeepOrder.apply())
+        .observeOn(AndroidSchedulers.mainThread())
         .subscribe { addView(it.toString()) }
 
     Flowable.just("9")
         .map { throw RuntimeException("exception $it") }
         .delay(500, TimeUnit.MILLISECONDS)
         .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
         .compose(rxKeepOrder.apply())
+        .observeOn(AndroidSchedulers.mainThread())
         .subscribe({}, { addView(it.message!!) })
 
     Maybe.just(10)
         .delay(2000, TimeUnit.MILLISECONDS)
         .subscribeOn(Schedulers.computation())
-        .observeOn(AndroidSchedulers.mainThread())
         .compose(rxKeepOrder.apply())
+        .observeOn(AndroidSchedulers.mainThread())
         .subscribe { addView(it.toString()) }
 
     Single.just("11")
         .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
         .compose(rxKeepOrder.apply())
+        .observeOn(AndroidSchedulers.mainThread())
         .subscribe({ addView(it) }, { })
   }
 
