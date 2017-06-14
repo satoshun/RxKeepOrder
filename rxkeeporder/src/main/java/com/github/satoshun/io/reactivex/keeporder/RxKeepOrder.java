@@ -5,6 +5,8 @@ import org.reactivestreams.Publisher;
 import android.os.Looper;
 
 import io.reactivex.BackpressureStrategy;
+import io.reactivex.Completable;
+import io.reactivex.CompletableSource;
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import io.reactivex.MaybeSource;
@@ -24,7 +26,7 @@ public class RxKeepOrder {
 
   private static final Object SENTINEL = new Object();
 
-  private final Scheduler scheduler = Schedulers.newThread();
+  private Scheduler scheduler = Schedulers.newThread();
 
   private Flowable<Object> preSource = Flowable.empty();
 
@@ -82,7 +84,24 @@ public class RxKeepOrder {
         preSource = upNext.toFlowable(BackpressureStrategy.DROP);
         return (MaybeSource<T>) upNext.singleElement();
       }
+
+      @Override public CompletableSource apply(Completable upstream) {
+        verifyMainThread();
+        Observable<Object> singleEmission = preSource
+            .lastOrError()
+            .onErrorResumeNext(Single.just(SENTINEL))
+            .toObservable();
+        Observable<Object> upNext = Observable.concatArrayEager(
+            singleEmission, upstream.toObservable()
+        ).skip(1).observeOn(scheduler).cache();
+        preSource = upNext.toFlowable(BackpressureStrategy.DROP);
+        return Completable.fromObservable(upNext);
+      }
     };
+  }
+
+  public void setObserveScheduler(Scheduler scheduler) {
+    this.scheduler = scheduler;
   }
 
   private static void verifyMainThread() {
