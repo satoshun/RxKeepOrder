@@ -26,7 +26,7 @@ public class RxKeepOrder {
 
   private static final Object SENTINEL = new Object();
 
-  private final Scheduler scheduler = Schedulers.newThread();
+  private Scheduler scheduler = Schedulers.newThread();
 
   private Flowable<Object> preSource = Flowable.empty();
 
@@ -98,6 +98,10 @@ public class RxKeepOrder {
         return Completable.fromObservable(upNext);
       }
     };
+  }
+
+  public void setObserveScheduler(Scheduler scheduler) {
+    this.scheduler = scheduler;
   }
 
   private static void verifyMainThread() {
