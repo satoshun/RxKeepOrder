@@ -13,7 +13,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Completable;
-import io.reactivex.Scheduler;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.observers.TestObserver;
@@ -27,11 +26,9 @@ import static org.junit.Assert.assertThat;
 public class RxKeepOrder_CompletableTest {
 
   private RxKeepOrder rxKeepOrder;
-  private Scheduler scheduler;
 
   @Before public void setup() throws Exception {
     rxKeepOrder = new RxKeepOrder();
-    scheduler = Schedulers.newThread();
   }
 
   @Test public void completable_keep_order_two() throws Exception {
@@ -40,7 +37,6 @@ public class RxKeepOrder_CompletableTest {
     Completable test1 = Completable.complete()
         .delay(100, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.apply())
-        .observeOn(scheduler)
         .doOnComplete(new Action() {
           @Override public void run() throws Exception {
             actual.add("1");
@@ -50,7 +46,6 @@ public class RxKeepOrder_CompletableTest {
     Completable test2 = Completable.complete()
         .delay(50, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.apply())
-        .observeOn(scheduler)
         .doOnComplete(new Action() {
           @Override public void run() throws Exception {
             actual.add("2");
@@ -69,7 +64,6 @@ public class RxKeepOrder_CompletableTest {
     Completable test1 = Completable.complete()
         .delay(100, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.apply())
-        .observeOn(scheduler)
         .doOnComplete(new Action() {
           @Override public void run() throws Exception {
             actual.add("1");
@@ -79,7 +73,6 @@ public class RxKeepOrder_CompletableTest {
     Completable test2 = Completable.complete()
         .delay(30, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.apply())
-        .observeOn(scheduler)
         .doOnComplete(new Action() {
           @Override public void run() throws Exception {
             actual.add("2");
@@ -90,7 +83,6 @@ public class RxKeepOrder_CompletableTest {
     Completable test3 = Completable.complete()
         .delay(50, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.apply())
-        .observeOn(scheduler)
         .doOnComplete(new Action() {
           @Override public void run() throws Exception {
             actual.add("3");
@@ -115,7 +107,6 @@ public class RxKeepOrder_CompletableTest {
     Completable.complete()
         .delay(100, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.apply())
-        .observeOn(scheduler)
         .subscribeOn(Schedulers.io())
         .subscribe(new Action() {
           @Override public void run() throws Exception {
@@ -126,7 +117,6 @@ public class RxKeepOrder_CompletableTest {
     Completable.complete()
         .delay(30, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.apply())
-        .observeOn(scheduler)
         .subscribeOn(Schedulers.io())
         .subscribe(new Action() {
           @Override public void run() throws Exception {
@@ -138,7 +128,6 @@ public class RxKeepOrder_CompletableTest {
     Completable.error(pseudoException)
         .delay(5, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.apply())
-        .observeOn(scheduler)
         .subscribeOn(Schedulers.io())
         .subscribe(new Action() {
           @Override public void run() throws Exception {
@@ -154,7 +143,6 @@ public class RxKeepOrder_CompletableTest {
     Completable.complete()
         .delay(10, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.apply())
-        .observeOn(scheduler)
         .subscribeOn(Schedulers.io())
         .subscribe(new Action() {
           @Override public void run() throws Exception {
@@ -165,7 +153,6 @@ public class RxKeepOrder_CompletableTest {
 
     latch.await(1000, TimeUnit.MILLISECONDS);
     compareList(actual, expected);
-
   }
 
   private static <T> void compareList(List<T> actual, List<T> expected) {
