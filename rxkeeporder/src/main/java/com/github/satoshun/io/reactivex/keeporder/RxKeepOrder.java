@@ -5,6 +5,8 @@ import org.reactivestreams.Publisher;
 import android.os.Looper;
 
 import io.reactivex.BackpressureStrategy;
+import io.reactivex.Completable;
+import io.reactivex.CompletableSource;
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import io.reactivex.MaybeSource;
@@ -81,6 +83,19 @@ public class RxKeepOrder {
         ).skip(1).observeOn(scheduler).cache();
         preSource = upNext.toFlowable(BackpressureStrategy.DROP);
         return (MaybeSource<T>) upNext.singleElement();
+      }
+
+      @Override public CompletableSource apply(Completable upstream) {
+        verifyMainThread();
+        Observable<Object> singleEmission = preSource
+            .lastOrError()
+            .onErrorResumeNext(Single.just(SENTINEL))
+            .toObservable();
+        Observable<Object> upNext = Observable.concatArrayEager(
+            singleEmission, upstream.toObservable()
+        ).skip(1).observeOn(scheduler).cache();
+        preSource = upNext.toFlowable(BackpressureStrategy.DROP);
+        return Completable.fromObservable(upNext);
       }
     };
   }

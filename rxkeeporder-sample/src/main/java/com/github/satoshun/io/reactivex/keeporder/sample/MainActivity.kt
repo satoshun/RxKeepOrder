@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.github.satoshun.io.reactivex.keeporder.RxKeepOrder
+import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Observable
@@ -77,6 +78,19 @@ class MainActivity : AppCompatActivity() {
         .compose(rxKeepOrder.apply())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe({ addView(it) }, { })
+
+    Completable.complete()
+        .subscribeOn(Schedulers.io())
+        .compose(rxKeepOrder.apply<Any>())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe({ addView("complete 12") }, { })
+
+    Completable.error(RuntimeException("pseudo"))
+        .delay(3000, TimeUnit.MILLISECONDS)
+        .subscribeOn(Schedulers.io())
+        .compose(rxKeepOrder.apply<Any>())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe({ }, { addView("complete exception 13") })
   }
 
   private fun addView(text: String) {

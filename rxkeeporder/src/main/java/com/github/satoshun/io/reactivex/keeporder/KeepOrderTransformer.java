@@ -1,5 +1,6 @@
 package com.github.satoshun.io.reactivex.keeporder;
 
+import io.reactivex.CompletableTransformer;
 import io.reactivex.FlowableTransformer;
 import io.reactivex.MaybeTransformer;
 import io.reactivex.ObservableTransformer;
@@ -9,5 +10,6 @@ public interface KeepOrderTransformer<T> extends
     FlowableTransformer<T, T>,
     ObservableTransformer<T, T>,
     SingleTransformer<T, T>,
-    MaybeTransformer<T, T> {
+    MaybeTransformer<T, T>,
+    CompletableTransformer {
 }
