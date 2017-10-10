@@ -5,11 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.github.satoshun.io.reactivex.keeporder.RxKeepOrder
-import io.reactivex.Completable
-import io.reactivex.Flowable
-import io.reactivex.Maybe
-import io.reactivex.Observable
-import io.reactivex.Single
+import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
@@ -17,7 +13,7 @@ import java.util.concurrent.TimeUnit
 class MainActivity : AppCompatActivity() {
 
   private val container: LinearLayout by lazy {
-    findViewById(R.id.container) as LinearLayout
+    findViewById<LinearLayout>(R.id.container)
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
