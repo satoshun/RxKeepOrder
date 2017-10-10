@@ -24,8 +24,9 @@ class MainActivity : AppCompatActivity() {
   }
 
   private fun loadByKeepOrder() {
-    val rxKeepOrder = RxKeepOrder()
-    rxKeepOrder.setObserveScheduler(AndroidSchedulers.mainThread())
+    val rxKeepOrder = RxKeepOrder().apply {
+      setObserveScheduler(AndroidSchedulers.mainThread())
+    }
 
     Observable.just("1", "2")
         .delay(2, TimeUnit.SECONDS)
