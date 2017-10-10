@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
 
 android {
@@ -23,6 +22,7 @@ android {
 
 dependencies {
   implementation project(":rxkeeporder")
+//  implementation 'com.github.satoshun:RxKeepOrder:0.1.0'
 
   implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
   implementation 'io.reactivex.rxjava2:rxjava:2.1.4'
