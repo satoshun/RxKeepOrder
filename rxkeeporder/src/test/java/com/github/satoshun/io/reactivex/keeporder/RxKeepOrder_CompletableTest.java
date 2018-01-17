@@ -2,9 +2,6 @@ package com.github.satoshun.io.reactivex.keeporder;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,8 +18,6 @@ import io.reactivex.schedulers.Schedulers;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class)
 public class RxKeepOrder_CompletableTest {
 
   private RxKeepOrder rxKeepOrder;
@@ -33,7 +28,7 @@ public class RxKeepOrder_CompletableTest {
 
   @Test public void completable_keep_order_two() throws Exception {
     final List<String> expected = Arrays.asList("1", "2");
-    final List<String> actual = new ArrayList<>();
+    final List<String> actual = new ArrayList<String>();
     Completable test1 = Completable.complete()
         .delay(100, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.apply())
@@ -60,7 +55,7 @@ public class RxKeepOrder_CompletableTest {
 
   @Test public void completable_keep_order_three() throws Exception {
     final List<String> expected = Arrays.asList("1", "2", "3");
-    final List<String> actual = new ArrayList<>();
+    final List<String> actual = new ArrayList<String>();
     Completable test1 = Completable.complete()
         .delay(100, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.apply())
@@ -98,12 +93,12 @@ public class RxKeepOrder_CompletableTest {
   @Test public void completable_keep_order_with_error() throws Exception {
     final CountDownLatch latch = new CountDownLatch(4);
     final RuntimeException pseudoException = new RuntimeException("pseudo error");
-    final List expected = new ArrayList<>(Arrays.asList(
+    final List expected = new ArrayList<Object>(Arrays.asList(
         "1",
         "2",
         pseudoException,
         "3"));
-    final List<Object> actual = new ArrayList<>();
+    final List<Object> actual = new ArrayList<Object>();
     Completable.complete()
         .delay(100, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.apply())
