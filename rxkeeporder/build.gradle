@@ -5,7 +5,18 @@ targetCompatibility = JavaVersion.VERSION_1_6
 sourceCompatibility = JavaVersion.VERSION_1_6
 
 dependencies {
-  compile 'io.reactivex.rxjava2:rxjava:2.1.8'
+  implementation 'io.reactivex.rxjava2:rxjava:2.1.8'
 
-  testCompile group: 'junit', name: 'junit', version: '4.12'
+  testImplementation group: 'junit', name: 'junit', version: '4.12'
+}
+
+test {
+  testLogging {
+    events 'passed', 'skipped', 'failed'
+  }
+}
+
+compileTestJava {
+  sourceCompatibility = JavaVersion.VERSION_1_8
+  targetCompatibility = JavaVersion.VERSION_1_8
 }
