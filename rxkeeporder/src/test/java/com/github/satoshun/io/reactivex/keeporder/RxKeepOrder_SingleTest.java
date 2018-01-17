@@ -2,9 +2,6 @@ package com.github.satoshun.io.reactivex.keeporder;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,8 +18,6 @@ import io.reactivex.subscribers.TestSubscriber;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class)
 public class RxKeepOrder_SingleTest {
 
   private RxKeepOrder rxKeepOrder;
@@ -67,11 +62,11 @@ public class RxKeepOrder_SingleTest {
 
   @Test public void single__keep_order_difference_type() throws Exception {
     final CountDownLatch latch = new CountDownLatch(3);
-    final List<Object> expected = new ArrayList<>(Arrays.asList(
+    final List<Object> expected = new ArrayList<Object>(Arrays.asList(
         1,
         "2",
         Collections.singletonList("3")));
-    final List<Object> actual = new ArrayList<>();
+    final List<Object> actual = new ArrayList<Object>();
     Single.just(1)
         .delay(100, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.<Integer>apply())
@@ -113,12 +108,12 @@ public class RxKeepOrder_SingleTest {
   @Test public void single__keep_order_difference_type_with_error() throws Exception {
     final CountDownLatch latch = new CountDownLatch(4);
     final RuntimeException pseudoException = new RuntimeException("pseudo error");
-    final List<Object> expected = new ArrayList<>(Arrays.asList(
+    final List<Object> expected = new ArrayList<Object>(Arrays.asList(
         1,
         "2",
         pseudoException,
         Collections.singletonList("3")));
-    final List<Object> actual = new ArrayList<>();
+    final List<Object> actual = new ArrayList<Object>();
     Single.just(1)
         .delay(100, TimeUnit.MILLISECONDS)
         .compose(rxKeepOrder.<Integer>apply())

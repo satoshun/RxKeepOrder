@@ -1,9 +1,16 @@
+buildscript {
+  dependencies {
+    classpath 'com.android.tools.build:gradle:3.0.1'
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+  }
+}
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
   compileSdkVersion 26
-  buildToolsVersion "27.0.0"
+
   defaultConfig {
     applicationId "com.github.satoshun.io.reactivex.keeporder.sample"
     minSdkVersion 15
@@ -25,7 +32,7 @@ dependencies {
 //  implementation 'com.github.satoshun:RxKeepOrder:0.1.0'
 
   implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
-  implementation 'io.reactivex.rxjava2:rxjava:2.1.4'
+  implementation 'io.reactivex.rxjava2:rxjava:2.1.8'
 
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
   implementation 'com.android.support:appcompat-v7:26.1.0'
