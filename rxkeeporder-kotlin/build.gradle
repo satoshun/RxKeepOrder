@@ -1,0 +1,18 @@
+buildscript {
+  dependencies {
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlin_version}"
+  }
+}
+
+apply plugin: 'java-library'
+apply plugin: 'org.jetbrains.kotlin.jvm'
+apply plugin: 'maven'
+
+targetCompatibility = JavaVersion.VERSION_1_6
+sourceCompatibility = JavaVersion.VERSION_1_6
+
+dependencies {
+  api project(':rxkeeporder')
+
+  implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}
