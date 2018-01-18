@@ -94,8 +94,9 @@ public class RxKeepOrder {
     };
   }
 
-  public void setObserveScheduler(Scheduler scheduler) {
+  public RxKeepOrder setObserveScheduler(Scheduler scheduler) {
     this.scheduler = scheduler;
+    return this;
   }
 
   public void clear() {
