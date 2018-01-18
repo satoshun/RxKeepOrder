@@ -34,7 +34,7 @@ public class RxKeepOrder_MultiTypeTest {
 
     Observable.just(1)
         .delay(100, TimeUnit.MILLISECONDS)
-        .compose(rxKeepOrder.<Integer>apply())
+        .compose(rxKeepOrder.<Integer>attach())
         .subscribeOn(Schedulers.io())
         .subscribe(new Consumer<Integer>() {
           @Override public void accept(Integer value) {
@@ -44,7 +44,7 @@ public class RxKeepOrder_MultiTypeTest {
         });
     Single.just(2)
         .delay(50, TimeUnit.MILLISECONDS)
-        .compose(rxKeepOrder.<Integer>apply())
+        .compose(rxKeepOrder.<Integer>attach())
         .subscribeOn(Schedulers.io())
         .subscribe(new Consumer<Integer>() {
           @Override public void accept(Integer value) {

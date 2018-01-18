@@ -29,11 +29,11 @@ public class RxKeepOrder_SingleTest {
   @Test public void single__keep_order_two() throws Exception {
     Single<Integer> test1 = Single.just(1)
         .delay(100, TimeUnit.MILLISECONDS)
-        .compose(rxKeepOrder.<Integer>apply())
+        .compose(rxKeepOrder.<Integer>attach())
         .subscribeOn(Schedulers.io());
     Single<Integer> test2 = Single.just(2)
         .delay(50, TimeUnit.MILLISECONDS)
-        .compose(rxKeepOrder.<Integer>apply())
+        .compose(rxKeepOrder.<Integer>attach())
         .subscribeOn(Schedulers.io());
 
     TestSubscriber<Integer> merged = Single.merge(test1, test2).test();
@@ -44,15 +44,15 @@ public class RxKeepOrder_SingleTest {
   @Test public void single__keep_order_three() throws Exception {
     Single<Integer> test1 = Single.just(1)
         .delay(100, TimeUnit.MILLISECONDS)
-        .compose(rxKeepOrder.<Integer>apply())
+        .compose(rxKeepOrder.<Integer>attach())
         .subscribeOn(Schedulers.io());
     Single<Integer> test2 = Single.just(2)
         .delay(30, TimeUnit.MILLISECONDS)
-        .compose(rxKeepOrder.<Integer>apply())
+        .compose(rxKeepOrder.<Integer>attach())
         .subscribeOn(Schedulers.io());
     Single<Integer> test3 = Single.just(3)
         .delay(50, TimeUnit.MILLISECONDS)
-        .compose(rxKeepOrder.<Integer>apply())
+        .compose(rxKeepOrder.<Integer>attach())
         .subscribeOn(Schedulers.io());
 
     TestSubscriber<Integer> merged = Single.merge(test1, test2, test3).test();
@@ -69,7 +69,7 @@ public class RxKeepOrder_SingleTest {
     final List<Object> actual = new ArrayList<Object>();
     Single.just(1)
         .delay(100, TimeUnit.MILLISECONDS)
-        .compose(rxKeepOrder.<Integer>apply())
+        .compose(rxKeepOrder.<Integer>attach())
         .subscribeOn(Schedulers.io())
         .subscribe(new Consumer<Integer>() {
           @Override public void accept(Integer value) throws Exception {
@@ -79,7 +79,7 @@ public class RxKeepOrder_SingleTest {
         });
     Single.just("2")
         .delay(30, TimeUnit.MILLISECONDS)
-        .compose(rxKeepOrder.<String>apply())
+        .compose(rxKeepOrder.<String>attach())
         .subscribeOn(Schedulers.io())
         .subscribe(new Consumer<String>() {
           @Override public void accept(String value) throws Exception {
@@ -90,7 +90,7 @@ public class RxKeepOrder_SingleTest {
     Single.just(
         Collections.singletonList("3"))
         .delay(10, TimeUnit.MILLISECONDS)
-        .compose(rxKeepOrder.<List<String>>apply())
+        .compose(rxKeepOrder.<List<String>>attach())
         .subscribeOn(Schedulers.io())
         .subscribe(new Consumer<List<String>>() {
           @Override public void accept(List<String> value) throws Exception {
@@ -116,7 +116,7 @@ public class RxKeepOrder_SingleTest {
     final List<Object> actual = new ArrayList<Object>();
     Single.just(1)
         .delay(100, TimeUnit.MILLISECONDS)
-        .compose(rxKeepOrder.<Integer>apply())
+        .compose(rxKeepOrder.<Integer>attach())
         .subscribeOn(Schedulers.io())
         .subscribe(new Consumer<Integer>() {
           @Override public void accept(Integer value) throws Exception {
@@ -126,7 +126,7 @@ public class RxKeepOrder_SingleTest {
         });
     Single.just("2")
         .delay(30, TimeUnit.MILLISECONDS)
-        .compose(rxKeepOrder.<String>apply())
+        .compose(rxKeepOrder.<String>attach())
         .subscribeOn(Schedulers.io())
         .subscribe(new Consumer<String>() {
           @Override public void accept(String value) throws Exception {
@@ -136,7 +136,7 @@ public class RxKeepOrder_SingleTest {
         });
     Single.error(pseudoException)
         .delay(5, TimeUnit.MILLISECONDS)
-        .compose(rxKeepOrder.apply())
+        .compose(rxKeepOrder.attach())
         .subscribeOn(Schedulers.io())
         .subscribe(new Consumer<Object>() {
           @Override public void accept(Object value) throws Exception {
@@ -151,7 +151,7 @@ public class RxKeepOrder_SingleTest {
     Single.just(
         Collections.singletonList("3"))
         .delay(10, TimeUnit.MILLISECONDS)
-        .compose(rxKeepOrder.<List<String>>apply())
+        .compose(rxKeepOrder.<List<String>>attach())
         .subscribeOn(Schedulers.io())
         .subscribe(new Consumer<List<String>>() {
           @Override public void accept(List<String> value) throws Exception {

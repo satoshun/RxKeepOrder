@@ -29,11 +29,11 @@ public class RxKeepOrder_MaybeTest {
   @Test public void maybe__keep_order_two() throws Exception {
     Maybe<Integer> test1 = Maybe.just(1)
         .delay(100, TimeUnit.MILLISECONDS)
-        .compose(rxKeepOrder.<Integer>apply())
+        .compose(rxKeepOrder.<Integer>attach())
         .subscribeOn(Schedulers.io());
     Maybe<Integer> test2 = Maybe.just(2)
         .delay(50, TimeUnit.MILLISECONDS)
-        .compose(rxKeepOrder.<Integer>apply())
+        .compose(rxKeepOrder.<Integer>attach())
         .subscribeOn(Schedulers.io());
 
     TestSubscriber<Integer> merged = Maybe.merge(test1, test2).test();
@@ -51,7 +51,7 @@ public class RxKeepOrder_MaybeTest {
 
     Maybe.just(1)
         .delay(100, TimeUnit.MILLISECONDS)
-        .compose(rxKeepOrder.<Integer>apply())
+        .compose(rxKeepOrder.<Integer>attach())
         .subscribeOn(Schedulers.io())
         .subscribe(new Consumer<Integer>() {
           @Override public void accept(Integer value) throws Exception {
@@ -61,7 +61,7 @@ public class RxKeepOrder_MaybeTest {
         });
     Maybe.just("2")
         .delay(30, TimeUnit.MILLISECONDS)
-        .compose(rxKeepOrder.<String>apply())
+        .compose(rxKeepOrder.<String>attach())
         .subscribeOn(Schedulers.io())
         .subscribe(new Consumer<String>() {
           @Override public void accept(String value) throws Exception {
@@ -71,7 +71,7 @@ public class RxKeepOrder_MaybeTest {
         });
     Maybe.just(Collections.singletonList("3"))
         .delay(10, TimeUnit.MILLISECONDS)
-        .compose(rxKeepOrder.<List<String>>apply())
+        .compose(rxKeepOrder.<List<String>>attach())
         .subscribeOn(Schedulers.io())
         .subscribe(new Consumer<List<String>>() {
           @Override public void accept(List<String> value) throws Exception {
@@ -97,7 +97,7 @@ public class RxKeepOrder_MaybeTest {
         Collections.singletonList("3")));
     Maybe.just(1)
         .delay(100, TimeUnit.MILLISECONDS)
-        .compose(rxKeepOrder.<Integer>apply())
+        .compose(rxKeepOrder.<Integer>attach())
         .subscribeOn(Schedulers.io())
         .subscribe(new Consumer<Integer>() {
           @Override public void accept(Integer value) throws Exception {
@@ -107,7 +107,7 @@ public class RxKeepOrder_MaybeTest {
         });
     Maybe.just("2")
         .delay(30, TimeUnit.MILLISECONDS)
-        .compose(rxKeepOrder.<String>apply())
+        .compose(rxKeepOrder.<String>attach())
         .subscribeOn(Schedulers.io())
         .subscribe(new Consumer<String>() {
           @Override public void accept(String value) throws Exception {
@@ -117,7 +117,7 @@ public class RxKeepOrder_MaybeTest {
         });
     Maybe.error(pseudoException)
         .delay(5, TimeUnit.MILLISECONDS)
-        .compose(rxKeepOrder.apply())
+        .compose(rxKeepOrder.attach())
         .subscribeOn(Schedulers.io())
         .subscribe(new Consumer<Object>() {
           @Override public void accept(Object value) throws Exception {
@@ -131,7 +131,7 @@ public class RxKeepOrder_MaybeTest {
         });
     Maybe.just(Collections.singletonList("3"))
         .delay(10, TimeUnit.MILLISECONDS)
-        .compose(rxKeepOrder.<List<String>>apply())
+        .compose(rxKeepOrder.<List<String>>attach())
         .subscribeOn(Schedulers.io())
         .subscribe(new Consumer<List<String>>() {
           @Override public void accept(List<String> value) throws Exception {

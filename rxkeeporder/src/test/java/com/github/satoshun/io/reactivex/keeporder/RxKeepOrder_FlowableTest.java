@@ -29,11 +29,11 @@ public class RxKeepOrder_FlowableTest {
   @Test public void flowable__keep_order_two() throws Exception {
     Flowable<Integer> test1 = Flowable.just(1)
         .delay(100, TimeUnit.MILLISECONDS)
-        .compose(rxKeepOrder.<Integer>apply())
+        .compose(rxKeepOrder.<Integer>attach())
         .subscribeOn(Schedulers.io());
     Flowable<Integer> test2 = Flowable.just(2)
         .delay(50, TimeUnit.MILLISECONDS)
-        .compose(rxKeepOrder.<Integer>apply())
+        .compose(rxKeepOrder.<Integer>attach())
         .subscribeOn(Schedulers.io());
 
     TestSubscriber<Integer> merged = Flowable.merge(test1, test2).test();
@@ -52,7 +52,7 @@ public class RxKeepOrder_FlowableTest {
 
     Flowable.just(1)
         .delay(100, TimeUnit.MILLISECONDS)
-        .compose(rxKeepOrder.<Integer>apply())
+        .compose(rxKeepOrder.<Integer>attach())
         .subscribeOn(Schedulers.io())
         .subscribe(new Consumer<Integer>() {
           @Override public void accept(Integer value) throws Exception {
@@ -62,7 +62,7 @@ public class RxKeepOrder_FlowableTest {
         });
     Flowable.just("2")
         .delay(30, TimeUnit.MILLISECONDS)
-        .compose(rxKeepOrder.<String>apply())
+        .compose(rxKeepOrder.<String>attach())
         .subscribeOn(Schedulers.io())
         .subscribe(new Consumer<String>() {
           @Override public void accept(String value) throws Exception {
@@ -74,7 +74,7 @@ public class RxKeepOrder_FlowableTest {
         Collections.singletonList("3"),
         Collections.singletonList("4"))
         .delay(10, TimeUnit.MILLISECONDS)
-        .compose(rxKeepOrder.<List<String>>apply())
+        .compose(rxKeepOrder.<List<String>>attach())
         .subscribeOn(Schedulers.io())
         .subscribe(new Consumer<List<String>>() {
           @Override public void accept(List<String> value) throws Exception {
@@ -101,7 +101,7 @@ public class RxKeepOrder_FlowableTest {
         Collections.singletonList("4")));
     Flowable.just(1)
         .delay(100, TimeUnit.MILLISECONDS)
-        .compose(rxKeepOrder.<Integer>apply())
+        .compose(rxKeepOrder.<Integer>attach())
         .subscribeOn(Schedulers.io())
         .subscribe(new Consumer<Integer>() {
           @Override public void accept(Integer value) throws Exception {
@@ -111,7 +111,7 @@ public class RxKeepOrder_FlowableTest {
         });
     Flowable.just("2")
         .delay(30, TimeUnit.MILLISECONDS)
-        .compose(rxKeepOrder.<String>apply())
+        .compose(rxKeepOrder.<String>attach())
         .subscribeOn(Schedulers.io())
         .subscribe(new Consumer<String>() {
           @Override public void accept(String value) throws Exception {
@@ -121,7 +121,7 @@ public class RxKeepOrder_FlowableTest {
         });
     Flowable.error(pseudoException)
         .delay(5, TimeUnit.MILLISECONDS)
-        .compose(rxKeepOrder.apply())
+        .compose(rxKeepOrder.attach())
         .subscribeOn(Schedulers.io())
         .subscribe(new Consumer<Object>() {
           @Override public void accept(Object value) throws Exception {
@@ -137,7 +137,7 @@ public class RxKeepOrder_FlowableTest {
         Collections.singletonList("3"),
         Collections.singletonList("4"))
         .delay(10, TimeUnit.MILLISECONDS)
-        .compose(rxKeepOrder.<List<String>>apply())
+        .compose(rxKeepOrder.<List<String>>attach())
         .subscribeOn(Schedulers.io())
         .subscribe(new Consumer<List<String>>() {
           @Override public void accept(List<String> value) throws Exception {

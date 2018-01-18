@@ -29,7 +29,7 @@ public class RxKeepOrder {
 
   private Flowable<Object> preSource = Flowable.empty();
 
-  @NonNull public <T> KeepOrderTransformer<T> apply() {
+  @NonNull public <T> KeepOrderTransformer<T> attach() {
     return new KeepOrderTransformer<T>() {
 
       @Override public Publisher<T> apply(Flowable<T> upstream) {
