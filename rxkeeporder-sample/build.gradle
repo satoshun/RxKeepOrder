@@ -9,12 +9,12 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-  compileSdkVersion 26
+  compileSdkVersion 27
 
   defaultConfig {
     applicationId "com.github.satoshun.io.reactivex.keeporder.sample"
     minSdkVersion 15
-    targetSdkVersion 26
+    targetSdkVersion 27
     versionCode 1
     versionName "1.0"
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -36,5 +36,5 @@ dependencies {
   implementation 'io.reactivex.rxjava2:rxjava:2.1.8'
 
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  implementation 'com.android.support:appcompat-v7:26.1.0'
+  implementation 'com.android.support:appcompat-v7:27.0.2'
 }
