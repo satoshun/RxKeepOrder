@@ -1,6 +1,6 @@
 # RxKeepOrder
 
-[![CircleCI](https://circleci.com/gh/satoshun/RxKeepOrder.svg?style=svg)](https://circleci.com/gh/satoshun/RxKeepOrder)
+[![](https://jitpack.io/v/satoshun/RxKeepOrder.svg)](https://jitpack.io/#satoshun/RxKeepOrder) [![CircleCI](https://circleci.com/gh/satoshun/RxKeepOrder.svg?style=svg)](https://circleci.com/gh/satoshun/RxKeepOrder)
 
 
 ## motivation
@@ -12,28 +12,56 @@ This library can be executed parallel and keep order emit items multi observable
 
 ## usage
 
-```kotlin
-val rxKeepOrder = RxKeepOrder().apply {
-  setObserveScheduler(AndroidSchedulers.mainThread())
-}
+for java example.
+
+```java
+// set default observeOn scheduler, almost mainThread when Android Platform
+seed = RxKeepOrder().setObserveScheduler(AndroidSchedulers.mainThread());
+
+// evaluate parallel observable1, observable2 and observable3
+// But evaluate subscribe keep order!!
 
 observable1
-    .compose(rxKeepOrder.apply())
-    .subscribe()
+    .compose(seed.attach())
+    .subscribe();
 observable2
-     .compose(rxKeepOrder.apply())
-     .subscribe()
+    .compose(seed.attach())
+    .subscribe();
 observable3
-     .compose(rxKeepOrder.apply())
-     .subscribe()
+    .compose(seed.attach())
+    .subscribe();
 ...
 ```
 
+
+for kotlin example.
+
+```kotlln
+// set default observeOn scheduler, almost mainThread when Android Platform
+seed = RxKeepOrder().setObserveScheduler(AndroidSchedulers.mainThread());
+
+// evaluate parallel observable1, observable2 and observable3
+// But evaluate subscribe keep order!!
+
+observable1
+    .keepOrder(seed)
+    .subscribe();
+observable2
+    .keepOrder(seed)
+    .subscribe();
+observable3
+    .keepOrder(seed)
+    .subscribe();
+...
+```
 
 ## install
 
 ```gradle
 maven { url 'https://jitpack.io' }
 
-implementation 'com.github.satoshun:RxKeepOrder:0.1.0'
+implementation 'com.github.satoshun.RxKeepOrder:rxkeeporder:0.2.0'
+
+// kotlin
+implementation 'com.github.satoshun.RxKeepOrder:rxkeeporder-kotlin:0.2.0'
 ```
