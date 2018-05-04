@@ -1,2 +1,3 @@
-include ':rxkeeporder', ':rxkeeporder-kotlin'
+include ':rxkeeporder'
+include ':rxkeeporder-kotlin'
 include ':rxkeeporder-sample'

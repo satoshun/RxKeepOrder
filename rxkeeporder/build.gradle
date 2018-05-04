@@ -5,7 +5,7 @@ targetCompatibility = JavaVersion.VERSION_1_6
 sourceCompatibility = JavaVersion.VERSION_1_6
 
 dependencies {
-  api 'io.reactivex.rxjava2:rxjava:2.1.8'
+  api 'io.reactivex.rxjava2:rxjava:2.1.10'
 
   testImplementation group: 'junit', name: 'junit', version: '4.12'
 }

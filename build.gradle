@@ -18,5 +18,5 @@ task clean(type: Delete) {
 }
 
 ext {
-  kotlin_version = '1.2.20'
+  kotlin_version = '1.2.41'
 }
