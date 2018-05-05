@@ -37,6 +37,9 @@ public class RxKeepOrder {
 
   private Flowable<Object> preSource = Flowable.empty();
 
+  /**
+   * Register keeporder event to observables type.
+   */
   @NonNull public <T> KeepOrderTransformer<T> attach() {
     return new KeepOrderTransformer<T>() {
 
@@ -102,6 +105,9 @@ public class RxKeepOrder {
     };
   }
 
+  /**
+   * clear order
+   */
   public void clear() {
     preSource = Flowable.empty();
   }
