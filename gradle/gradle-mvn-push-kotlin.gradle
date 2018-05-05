@@ -94,10 +94,11 @@ afterEvaluate { project ->
 
   task sourcesJar(type: Jar) {
     classifier = 'sources'
-    from sourceSets.main.java.source
+    from sourceSets.main.allSource
   }
 
   artifacts {
+    archives jar
     archives sourcesJar
     archives dokkaJar
   }

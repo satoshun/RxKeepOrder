@@ -7,13 +7,13 @@ buildscript {
 apply plugin: 'java-library'
 apply plugin: 'org.jetbrains.dokka'
 
-targetCompatibility = JavaVersion.VERSION_1_7
-sourceCompatibility = JavaVersion.VERSION_1_7
+targetCompatibility = JavaVersion.VERSION_1_6
+sourceCompatibility = JavaVersion.VERSION_1_6
 
 dependencies {
   api Libs.rx_java
 
-  testImplementation group: 'junit', name: 'junit', version: '4.12'
+  testImplementation Libs.junit
 }
 
 test {
