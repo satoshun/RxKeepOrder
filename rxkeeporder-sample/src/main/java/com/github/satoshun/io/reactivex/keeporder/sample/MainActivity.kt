@@ -13,7 +13,7 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import java.util.concurrent.*
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
   private val container: LinearLayout by lazy {
@@ -28,10 +28,7 @@ class MainActivity : AppCompatActivity() {
   }
 
   private fun loadByKeepOrder() {
-    val seed = RxKeepOrder().apply {
-      // set default observeOn scheduler
-      setObserveScheduler(AndroidSchedulers.mainThread())
-    }
+    val seed = RxKeepOrder(AndroidSchedulers.mainThread())
 
     Observable.just("1", "2")
         .delay(2, TimeUnit.SECONDS)

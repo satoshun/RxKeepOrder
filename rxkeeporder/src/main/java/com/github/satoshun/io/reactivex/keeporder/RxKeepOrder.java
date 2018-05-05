@@ -25,10 +25,21 @@ public class RxKeepOrder {
 
   private static final Object SENTINEL = new Object();
 
-  private Scheduler scheduler = Schedulers.newThread();
+  private final Scheduler observeOnScheduler;
+
+  public RxKeepOrder() {
+    this(Schedulers.newThread());
+  }
+
+  public RxKeepOrder(Scheduler observeOnScheduler) {
+    this.observeOnScheduler = observeOnScheduler;
+  }
 
   private Flowable<Object> preSource = Flowable.empty();
 
+  /**
+   * Register keeporder event to observables type.
+   */
   @NonNull public <T> KeepOrderTransformer<T> attach() {
     return new KeepOrderTransformer<T>() {
 
@@ -39,7 +50,7 @@ public class RxKeepOrder {
             .toFlowable();
         Flowable<Object> upNext = Flowable.fromArray(singleEmission, upstream).concatMapEagerDelayError(
             (Function) Functions.identity(), bufferSize(), bufferSize(), false
-        ).skip(1).observeOn(scheduler).cache();
+        ).skip(1).observeOn(observeOnScheduler).cache();
         preSource = upNext;
         return (Flowable<T>) upNext;
       }
@@ -51,7 +62,7 @@ public class RxKeepOrder {
             .toObservable();
         Observable<Object> upNext = Observable.concatArrayEager(
             singleEmission, upstream
-        ).skip(1).observeOn(scheduler).cache();
+        ).skip(1).observeOn(observeOnScheduler).cache();
         preSource = upNext.toFlowable(BackpressureStrategy.DROP);
         return (ObservableSource<T>) upNext;
       }
@@ -63,7 +74,7 @@ public class RxKeepOrder {
             .toObservable();
         Observable<Object> upNext = Observable.concatArrayEager(
             singleEmission, upstream.toObservable()
-        ).skip(1).observeOn(scheduler).observeOn(scheduler).cache();
+        ).skip(1).observeOn(observeOnScheduler).observeOn(observeOnScheduler).cache();
         preSource = upNext.toFlowable(BackpressureStrategy.DROP);
         return (SingleSource<T>) upNext.singleOrError();
       }
@@ -75,7 +86,7 @@ public class RxKeepOrder {
             .toObservable();
         Observable<Object> upNext = Observable.concatArrayEager(
             singleEmission, upstream.toObservable()
-        ).skip(1).observeOn(scheduler).cache();
+        ).skip(1).observeOn(observeOnScheduler).cache();
         preSource = upNext.toFlowable(BackpressureStrategy.DROP);
         return (MaybeSource<T>) upNext.singleElement();
       }
@@ -87,18 +98,16 @@ public class RxKeepOrder {
             .toObservable();
         Observable<Object> upNext = Observable.concatArrayEager(
             singleEmission, upstream.toObservable()
-        ).skip(1).observeOn(scheduler).cache();
+        ).skip(1).observeOn(observeOnScheduler).cache();
         preSource = upNext.toFlowable(BackpressureStrategy.DROP);
         return Completable.fromObservable(upNext);
       }
     };
   }
 
-  public RxKeepOrder setObserveScheduler(Scheduler scheduler) {
-    this.scheduler = scheduler;
-    return this;
-  }
-
+  /**
+   * clear order
+   */
   public void clear() {
     preSource = Flowable.empty();
   }
