@@ -1,18 +1,20 @@
 buildscript {
   dependencies {
-    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlin_version}"
+    classpath Libs.kotlin_plugin
+    classpath Libs.dokka_plugin
   }
 }
 
 apply plugin: 'java-library'
 apply plugin: 'org.jetbrains.kotlin.jvm'
-apply plugin: 'maven'
+apply plugin: 'org.jetbrains.dokka'
 
-targetCompatibility = JavaVersion.VERSION_1_6
-sourceCompatibility = JavaVersion.VERSION_1_6
+targetCompatibility = JavaVersion.VERSION_1_7
+sourceCompatibility = JavaVersion.VERSION_1_7
 
 dependencies {
   api project(':rxkeeporder')
-
-  implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+  api Libs.kotlin
 }
+
+apply from: rootProject.file('gradle/gradle-mvn-push-kotlin.gradle')

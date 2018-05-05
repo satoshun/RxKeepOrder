@@ -1,11 +1,17 @@
-apply plugin: 'java-library'
-apply plugin: 'maven'
+buildscript {
+  dependencies {
+    classpath Libs.dokka_plugin
+  }
+}
 
-targetCompatibility = JavaVersion.VERSION_1_6
-sourceCompatibility = JavaVersion.VERSION_1_6
+apply plugin: 'java-library'
+apply plugin: 'org.jetbrains.dokka'
+
+targetCompatibility = JavaVersion.VERSION_1_7
+sourceCompatibility = JavaVersion.VERSION_1_7
 
 dependencies {
-  api 'io.reactivex.rxjava2:rxjava:2.1.10'
+  api Libs.rx_java
 
   testImplementation group: 'junit', name: 'junit', version: '4.12'
 }
@@ -20,3 +26,5 @@ compileTestJava {
   sourceCompatibility = JavaVersion.VERSION_1_8
   targetCompatibility = JavaVersion.VERSION_1_8
 }
+
+apply from: rootProject.file('gradle/gradle-mvn-push-kotlin.gradle')

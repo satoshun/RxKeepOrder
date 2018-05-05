@@ -1,7 +1,7 @@
 buildscript {
   dependencies {
-    classpath 'com.android.tools.build:gradle:3.1.2'
-    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    classpath Libs.android_plugin
+    classpath Libs.kotlin_plugin
   }
 }
 
@@ -29,12 +29,10 @@ android {
 
 dependencies {
   implementation project(":rxkeeporder-kotlin")
-//  implementation project(":rxkeeporder")
-//  implementation 'com.github.satoshun.RxKeepOrder:rxkeeporder-kotlin:0.2.0'
+//  implementation 'com.github.satoshun.RxKeepOrder:rxkeeporder-kotlin:0.3.0-SNAPSHOT'
 
-  implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
-  implementation 'io.reactivex.rxjava2:rxjava:2.1.10'
-
-  implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  implementation 'com.android.support:appcompat-v7:27.1.1'
+  implementation Libs.kotlin
+  implementation Libs.rx_java
+  implementation Libs.rx_android
+  implementation Libs.appcompat_v7
 }
