@@ -29,7 +29,7 @@ android {
 
 dependencies {
   implementation project(":rxkeeporder-kotlin")
-//  implementation 'com.github.satoshun.RxKeepOrder:rxkeeporder-kotlin:0.3.0-SNAPSHOT'
+//  implementation 'com.github.satoshun.RxKeepOrder:rxkeeporder-kotlin:0.3.0'
 
   implementation Libs.kotlin
   implementation Libs.rx_java

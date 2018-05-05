@@ -98,7 +98,6 @@ afterEvaluate { project ->
   }
 
   artifacts {
-    archives jar
     archives sourcesJar
     archives dokkaJar
   }
