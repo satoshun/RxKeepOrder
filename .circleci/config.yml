@@ -21,5 +21,5 @@ jobs:
             - ~/.gradle
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "rxkeeporder/build.gradle" }}-{{ checksum  "rxkeeporder-sample/build.gradle" }}
       - run:
-          name: Build
+          name: execute test
           command: ./gradlew test
