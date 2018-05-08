@@ -1,6 +1,9 @@
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.satoshun.RxKeepOrder/rxkeeporder/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.satoshun.RxKeepOrder/rxkeeporder)
+[![CircleCI](https://circleci.com/gh/satoshun/RxKeepOrder.svg?style=svg)](https://circleci.com/gh/satoshun/RxKeepOrder)
+
 # RxKeepOrder
 
-[![CircleCI](https://circleci.com/gh/satoshun/RxKeepOrder.svg?style=svg)](https://circleci.com/gh/satoshun/RxKeepOrder)
+keeps ordering of RxJava Streams(Observable, Flowable, Single and Maybe)
 
 ## motivation
 
