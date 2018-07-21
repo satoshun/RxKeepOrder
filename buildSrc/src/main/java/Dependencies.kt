@@ -13,7 +13,7 @@ object Libs {
 
   val kotlin = "org.jetbrains.kotlin:kotlin-stdlib:${Vers.kotlin}"
 
-  val rx_java = "io.reactivex.rxjava2:rxjava:2.1.14"
+  val rx_java = "io.reactivex.rxjava2:rxjava:2.1.16"
   val rx_android = "io.reactivex.rxjava2:rxandroid:2.0.2"
 
   val appcompat_v7 = "com.android.support:appcompat-v7:${Vers.support_lib}"
