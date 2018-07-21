@@ -1,13 +1,19 @@
 buildscript {
   dependencies {
     classpath Libs.kotlin_plugin
+    classpath Libs.ktlint_plugin
     classpath Libs.dokka_plugin
+  }
+
+  repositories {
+    gradlePluginPortal()
   }
 }
 
 apply plugin: 'java-library'
 apply plugin: 'org.jetbrains.kotlin.jvm'
 apply plugin: 'org.jetbrains.dokka'
+apply plugin: 'org.jlleitschuh.gradle.ktlint'
 
 targetCompatibility = JavaVersion.VERSION_1_6
 sourceCompatibility = JavaVersion.VERSION_1_6
