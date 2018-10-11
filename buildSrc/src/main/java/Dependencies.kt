@@ -1,7 +1,7 @@
 object Vers {
-  val agp = "3.1.3"
+  val agp = "3.2.0"
 
-  val kotlin = "1.2.51"
+  val kotlin = "1.2.71"
   val support_lib = "27.1.1"
 }
 
