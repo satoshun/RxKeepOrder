@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/android:api-27-alpha
+      - image: circleci/android:api-28-alpha
 
     environment:
       # Customize the JVM maximum heap limit
@@ -22,4 +22,7 @@ jobs:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "rxkeeporder/build.gradle" }}-{{ checksum  "rxkeeporder-sample/build.gradle" }}
       - run:
           name: execute test
-          command: ./gradlew test
+          command: |
+            ./gradlew test
+            ./gradlew jacocoTestReport
+            bash <(curl -s https://codecov.io/bash)
